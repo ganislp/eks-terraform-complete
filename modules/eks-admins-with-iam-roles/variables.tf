@@ -11,3 +11,4 @@ variable "eks_admin_role_name" {}
 variable "eks_readonly_role_name" {}
 variable "eks_read_only_group_name" {}
 variable "eksreadonly_user_name" {}
+variable "eks_developer_user_name" {}

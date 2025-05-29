@@ -19,7 +19,7 @@ locals {
     {
       rolearn  = "${aws_iam_role.eks_readonly_role.arn}"
       username = "eks-readonly"
-      groups   = ["${kubernetes_cluster_role_binding_v1.eksreadonly_clusterrolebinding.subject[0].name}"]
+      groups   = ["${kubernetes_cluster_role_binding_v1.eksreadonly_clusterrolebinding.subject[0].name}","${kubernetes_role_binding_v1.eksdeveloper_rolebinding.subject[0].name}"] 
     }
 
   ]

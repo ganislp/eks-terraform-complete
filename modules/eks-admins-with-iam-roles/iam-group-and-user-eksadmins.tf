@@ -28,6 +28,8 @@ resource "aws_iam_user" "eks_role_admin_user" {
   tags          = merge(var.common_tags, { Name = "eksadmin2" })
 }
 
+
+
 resource "aws_iam_group_membership" "eksadmins" {
   name  = "eksadmins-group-membership"
   users = [aws_iam_user.eks_role_admin_user.name]
