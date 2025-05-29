@@ -1,3 +1,8 @@
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
+
 output "cluster_certificate_authority_data" {
   value = module.eks_cluester.cluster_certificate_authority_data
 }
