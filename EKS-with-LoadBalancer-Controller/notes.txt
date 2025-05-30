@@ -1,0 +1,123 @@
+aws eks --region us-east-1 update-kubeconfig --name  demo-eks
+
+kubectl get deployments -n kube-system
+------aws-load-balancer-controller
+
+kubectl describe  deployments aws-load-balancer-controller  -n kube-system
+
+---Selector:               app.kubernetes.io/instance=aws-load-balancer-controller,app.kubernetes.io/name=aws-load-balancer-controller
+----Service Account:  aws-load-balancer-controller
+
+kubectl get pods  -n kube-system
+----aws-load-balancer-controller-56f8698cdc-hvz26
+
+kubectl logs aws-load-balancer-controller-56f8698cdc-7j7fd -n kube-system
+
+kubectl get svc -n kube-system
+NAME                                TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE
+aws-load-balancer-webhook-service   ClusterIP   172.20.2.91    <none>        443/TCP                  40m
+
+---aws-load-balancer-webhook-service
+
+kubectl describe   svc aws-load-balancer-webhook-service  -n kube-system
+Type:                     ClusterIP
+Selector:                 app.kubernetes.io/instance=aws-load-balancer-controller,app.kubernetes.io/name=aws-load-balancer-controller
+IP:                       172.20.2.91
+IPs:                      172.20.2.91
+Port:                     webhook-server  443/TCP
+TargetPort:               webhook-server/TCP
+Endpoints:                10.0.3.247:9443,10.0.3.250:9443
+
+kubectl get pods -o wide  -n kube-system
+NAME                                            READY   STATUS    RESTARTS   AGE   IP           NODE                        NOMINATED NODE   READINESS GATES
+aws-load-balancer-controller-56f8698cdc-7j7fd   1/1     Running   0          44m   10.0.3.250   ip-10-0-3-42.ec2.internal   <none>           <none>
+aws-load-balancer-controller-56f8698cdc-hvz26   1/1     Running   0          44m   10.0.3.247   ip-10-0-3-42.ec2.internal   <none>           <none>
+
+
+kubectl get sa  -n kube-system
+
+kubectl describe  sa aws-load-balancer-controller  -n kube-system
+Annotations:         eks.amazonaws.com/role-arn: arn:aws:iam::466649784722:role/demo-dev-lbc-iam-role
+                     meta.helm.sh/release-name: aws-load-balancer-controller
+                     meta.helm.sh/release-namespace: kube-system
+
+Step-17: Verify AWS Load Balancer Controller k8s Service Account - Internals
+
+kubectl -n kube-system get sa aws-load-balancer-controller
+
+kubectl -n kube-system get secret
+aws-load-balancer-tls                                kubernetes.io/tls    3      174m
+sh.helm.release.v1.aws-load-balancer-controller.v1   helm.sh/release.v1   1      174m
+
+kubectl -n kube-system get secret sh.helm.release.v1.aws-load-balancer-controller.v1 -o yaml
+
+kubectl -n kube-system get secret aws-load-balancer-tls -o yaml
+  
+  https://www.base64decode.org/
+https://www.sslchecker.com/certdecoder
+
+## Decode token using below two websites
+https://www.base64decode.org/
+https://jwt.io/
+Observation:
+1. Review decoded JWT Token
+
+kubectl -n kube-system get pods
+kubectl -n kube-system get pod <AWS-Load-Balancer-Controller-POD-NAME> -o yaml
+kubectl -n kube-system get pod aws-load-balancer-controller-65b4f64d6c-h2vh4 -o yaml
+Observation:
+1. Verify "spec.serviceAccount" and "spec.serviceAccountName"
+2. We should find the Service Account Name as "aws-load-balancer-controller"
+3. Verify "spec.volumes". You should find something as below, which is a temporary credentials to access AWS Services
+CHECK-1: Verify "spec.volumes.name = aws-iam-token"
+  - name: aws-iam-token
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          audience: sts.amazonaws.com
+          expirationSeconds: 86400
+          path: token
+CHECK-2: Verify Volume Mounts
+    volumeMounts:
+    - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+      name: aws-iam-token
+      readOnly: true          
+CHECK-3: Verify ENVs whose path name is "token"
+    - name: AWS_WEB_IDENTITY_TOKEN_FILE
+      value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token     
+
+      Step-18: Verify TLS Certs for AWS Load Balancer Controller - Internals
+
+# List aws-load-balancer-tls secret 
+kubectl -n kube-system get secret aws-load-balancer-tls -o yaml
+
+# Verify the ca.crt and tls.crt in below websites
+https://www.base64decode.org/
+https://www.sslchecker.com/certdecoder
+
+# Make a note of Common Name and SAN from above 
+Common Name: aws-load-balancer-controller
+SAN: aws-load-balancer-webhook-service.kube-system, aws-load-balancer-webhook-service.kube-system.svc
+
+# List Pods in YAML format
+kubectl -n kube-system get pods
+kubectl -n kube-system get pod <AWS-Load-Balancer-Controller-POD-NAME> -o yaml
+kubectl -n kube-system get pod aws-load-balancer-controller-65b4f64d6c-h2vh4 -o yaml
+Observation:
+1. Verify how the secret is mounted in AWS Load Balancer Controller Pod
+CHECK-2: Verify Volume Mounts
+    volumeMounts:
+    - mountPath: /tmp/k8s-webhook-server/serving-certs
+      name: cert
+      readOnly: true
+CHECK-3: Verify Volumes
+  volumes:
+  - name: cert
+    secret:
+      defaultMode: 420
+      secretName: aws-load-balancer-tls     
+--------------------------------------------------------------------------
+
+https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/ingress/annotations/
+kubectl get ingressclass

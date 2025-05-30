@@ -10,18 +10,18 @@ module "vpc" {
   aws_azs              = var.aws_azs
 }
 
-module "bastion_host" {
-  source           = "./modules/bastion"
-  vpc_id           = module.vpc.vpc_id
-  instance_type    = var.instance_type
-  sg_ingress_ports = var.sg_ingress_public
-  ec2_name         = var.ec2_name
-  naming_prefix    = local.naming_prefix
-  key_name         = var.key_name
-  subnet_id        = module.vpc.public_subnets[0]
-  common_tags      = local.common_tags
-depends_on = [ module.vpc ]
-}
+# module "bastion_host" {
+#   source           = "./modules/bastion"
+#   vpc_id           = module.vpc.vpc_id
+#   instance_type    = var.instance_type
+#   sg_ingress_ports = var.sg_ingress_public
+#   ec2_name         = var.ec2_name
+#   naming_prefix    = local.naming_prefix
+#   key_name         = var.key_name
+#   subnet_id        = module.vpc.public_subnets[0]
+#   common_tags      = local.common_tags
+# depends_on = [ module.vpc ]
+# }
 
 module "eks_cluester" {
   source                              = "./modules/eks-cluster"
