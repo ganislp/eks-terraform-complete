@@ -94,7 +94,7 @@ variable "eks_cluster_name" {
 
 variable "eks_cluster_version" {
   type    = string
-  default = "1.31"
+  default = "1.32"
 }
 
 variable "eks_cluster_endpoint_private_access" {

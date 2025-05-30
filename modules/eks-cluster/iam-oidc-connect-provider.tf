@@ -30,3 +30,6 @@ output "aws_iam_openid_connect_provider_extract_from_arn" {
 aws_iam_openid_connect_provider_arn = "arn:aws:iam::180789647333:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/A9DED4A4FA341C2A5D985A260650F232"
 aws_iam_openid_connect_provider_extract_from_arn = "oidc.eks.us-east-1.amazonaws.com/id/A9DED4A4FA341C2A5D985A260650F232"
 */
+
+#aws_iam_openid_connect_provider_arn              = "arn:aws:iam::466649784722:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/A321552833E96554F49805D94706B5B5" -> null
+#aws_iam_openid_connect_provider_extract_from_arn = "oidc.eks.us-east-1.amazonaws.com/id/A321552833E96554F49805D94706B5B5" -> null
