@@ -24,6 +24,8 @@ resource "kubernetes_ingress_v1" "ingress" {
       #"alb.ingress.kubernetes.io/ssl-policy" = "ELBSecurityPolicy-TLS-1-1-2017-01" #Optional (Picks default if not used)    
       # SSL Redirect Setting
       "alb.ingress.kubernetes.io/ssl-redirect" = 443
+      # External DNS - For creating a Record Set in Route53 ----------------------must install external dns
+    "external-dns.alpha.kubernetes.io/hostname" =  "dnstest901.skywaytechsolutions.com, dnstest902.skywaytechsolutions.com"
     }
   }
   spec {
