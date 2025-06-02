@@ -1,0 +1,10 @@
+aws eks list-fargate-profiles --cluster demo-eks
+
+
+kubectl get configmap aws-auth -n kube-system  -o yaml
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      - system:node-proxier
+      rolearn: arn:aws:iam::466649784722:role/demo-dev-eks-fargate-profile-role-apps
+      username: system:node:{{SessionName}}

@@ -34,3 +34,7 @@ output "aws_iam_openid_connect_provider_extract_from_arn" {
 output "eks_nodegroup_role_arn" {
   value = module.eks_node_group_public_private.eks_nodegroup_role
 }
+
+output "private_subnets" {
+  value = module.vpc.private_subnets
+}
