@@ -1,8 +1,7 @@
 # Kubernetes Deployment Manifest
 resource "kubernetes_deployment_v1" "myapp3" {
   metadata {
-    name      = "app3-nginx-deployment"
-    namespace = kubernetes_namespace_v1.ns_app3.metadata[0].name
+    name = "app3-nginx-deployment"
     labels = {
       app = "app3-nginx"
     }

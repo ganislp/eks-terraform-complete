@@ -1,6 +1,7 @@
 resource "kubernetes_deployment_v1" "myapp1" {
   metadata {
-    name = "app1-nginx-deployment"
+    name      = "app1-nginx-deployment"
+    namespace = kubernetes_namespace_v1.ns_app1.metadata[0].name
     labels = {
       app = "app1-nginx"
     }

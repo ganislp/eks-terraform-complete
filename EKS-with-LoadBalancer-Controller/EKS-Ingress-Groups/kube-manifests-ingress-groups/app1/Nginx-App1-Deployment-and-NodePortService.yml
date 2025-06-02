@@ -4,6 +4,7 @@ metadata:
   name: app1-nginx-deployment
   labels:
     app: app1-nginx
+  namespace: ns-app1  
 spec:
   replicas: 1
   selector:

@@ -1,7 +1,8 @@
 # Kubernetes Service Manifest (Type: Node Port Service)
 resource "kubernetes_service_v1" "myapp1_np_service" {
   metadata {
-    name = "app1-nginx-nodeport-service"
+    name      = "app1-nginx-nodeport-service"
+    namespace = kubernetes_namespace_v1.ns_app1.metadata[0].name
     annotations = {
       "alb.ingress.kubernetes.io/healthcheck-path" = "/app1/index.html"
     }
