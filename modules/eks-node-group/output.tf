@@ -16,10 +16,11 @@ output "node_group_private_arn" {
 
 output "node_group_private_status" {
   description = "Private Node Group status"
-  value       = aws_eks_node_group.eks_private_node_group.status 
+  value       = aws_eks_node_group.eks_private_node_group.status
 }
 
 output "node_group_private_version" {
   description = "Private Node Group Kubernetes Version"
   value       = aws_eks_node_group.eks_private_node_group.version
 }
+

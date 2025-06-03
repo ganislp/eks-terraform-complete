@@ -35,3 +35,30 @@ Go to Services -> EKS -> hr-dev-eksdemo1 -> Configuration -> Details -> OpenID C
 https://oidc.eks.us-east-1.amazonaws.com/id/C7F5DC7E4B1AA765CA712C54F605BB75/.well-known/openid-configuration
 
 ------------------------------------------------
+
+Step-09: Patch CoreDNS Pod in kube-system to run on EKS Fargate Profile
+
+# Verify Pods 
+kubectl -n kube-system get pods
+Observation: Should see coredns pods in pending state
+
+# Run the following command to remove the eks.amazonaws.com/compute-type : ec2 annotation from the CoreDNS pods.
+kubectl patch deployment coredns \
+    -n kube-system \
+    --type json \
+    -p='[{"op": "remove", "path": "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type"}]'
+
+# Delete & Recreate CoreDNS Pods so that they can get scheduled on Fargate 
+kubectl rollout restart -n kube-system deployment coredns
+
+kubectl rollout restart -n kube-system deployment aws-load-balancer-controller
+
+# Verify Pods 
+kubectl -n kube-system get pods
+Observation: 
+1. Wait for a minute or two
+2. Should see coredns pods in Running state
+
+# Verify Worker Nodes
+kubectl get nodes
+Observation: Should see two Fargate nodes related to CoreDNS running

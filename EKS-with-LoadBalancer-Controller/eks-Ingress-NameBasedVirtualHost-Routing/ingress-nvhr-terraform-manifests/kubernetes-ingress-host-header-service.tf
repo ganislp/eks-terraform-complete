@@ -1,12 +1,12 @@
 # Wait 60 seconds after ACM Certificate Resource is created and changed its Certificate status to ISSUED
 resource "time_sleep" "wait_60_seconds" {
-  depends_on = [aws_acm_certificate.acm_cert]
+  depends_on      = [aws_acm_certificate.acm_cert]
   create_duration = "60s"
 }
 
 
 resource "kubernetes_ingress_v1" "ingress" {
-  depends_on = [ time_sleep.wait_60_seconds ]
+  depends_on = [time_sleep.wait_60_seconds]
   metadata {
     name = "ingress-namedbasedvhost-demo"
     annotations = {
@@ -40,7 +40,7 @@ resource "kubernetes_ingress_v1" "ingress" {
   }
   spec {
     ingress_class_name = "my-aws-ingress-class" # Ingress Class    
-     # Default Rule: Route requests to App3 if the DNS is "tfdefault101.skywaytechsolutions.com" 
+    # Default Rule: Route requests to App3 if the DNS is "tfdefault101.skywaytechsolutions.com" 
     default_backend {
       service {
         name = kubernetes_service_v1.myapp3_np_service.metadata[0].name
@@ -49,11 +49,11 @@ resource "kubernetes_ingress_v1" "ingress" {
         }
       }
     }
-        # SSL Certificate Discovery using TLS
+    # SSL Certificate Discovery using TLS
     tls {
-      hosts = [ "*.skywaytechsolutions.com" ]
-    }  
-       rule {
+      hosts = ["*.skywaytechsolutions.com"]
+    }
+    rule {
       http {
         path {
           backend {
@@ -64,7 +64,7 @@ resource "kubernetes_ingress_v1" "ingress" {
               }
             }
           }
-          path = "/app1"
+          path      = "/app1"
           path_type = "Prefix"
         }
 
@@ -77,49 +77,49 @@ resource "kubernetes_ingress_v1" "ingress" {
               }
             }
           }
-          path = "/app2"
+          path      = "/app2"
           path_type = "Prefix"
         }
       }
     }
   }
 
-    # rule {
-    #   host = "tfapp101.skywaytechsolutions.com"
-    #   http {
-    #     path {
-    #       path      = "/"
-    #       path_type = "Prefix"
-    #       backend {
-    #         service {
-    #           name = kubernetes_service_v1.myapp1_np_service.metadata[0].name
-    #           port {
-    #             number = 80
-    #           }
-    #         }
-    #       }
-    #     }
+  # rule {
+  #   host = "tfapp101.skywaytechsolutions.com"
+  #   http {
+  #     path {
+  #       path      = "/"
+  #       path_type = "Prefix"
+  #       backend {
+  #         service {
+  #           name = kubernetes_service_v1.myapp1_np_service.metadata[0].name
+  #           port {
+  #             number = 80
+  #           }
+  #         }
+  #       }
+  #     }
 
-    #   }
-    # }
+  #   }
+  # }
 
-    # rule {
-    #   host = "tfapp201.skywaytechsolutions.com"
-    #   http {
+  # rule {
+  #   host = "tfapp201.skywaytechsolutions.com"
+  #   http {
 
-    #     path {
-    #       path      = "/"
-    #       path_type = "Prefix"
-    #       backend {
-    #         service {
-    #           name = kubernetes_service_v1.myapp2_np_service.metadata[0].name
-    #           port {
-    #             number = 80
-    #           }
-    #         }
-    #       }
-    #     }
-    #   }
-    # }
+  #     path {
+  #       path      = "/"
+  #       path_type = "Prefix"
+  #       backend {
+  #         service {
+  #           name = kubernetes_service_v1.myapp2_np_service.metadata[0].name
+  #           port {
+  #             number = 80
+  #           }
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
 
-  }
+}

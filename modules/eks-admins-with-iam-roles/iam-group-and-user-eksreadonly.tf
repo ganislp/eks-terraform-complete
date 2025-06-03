@@ -38,5 +38,5 @@ resource "aws_iam_user" "eks_developer_user" {
 resource "aws_iam_group_membership" "eksreadonly" {
   group = aws_iam_group.eksreadonly_iam_group.name
   name  = "eksreadonly-group-membership"
-  users = [aws_iam_user.eksreadonly_user.name,aws_iam_user.eks_developer_user.name]
+  users = [aws_iam_user.eksreadonly_user.name, aws_iam_user.eks_developer_user.name]
 }

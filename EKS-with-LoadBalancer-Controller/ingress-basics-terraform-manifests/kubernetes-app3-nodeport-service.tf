@@ -11,8 +11,8 @@ resource "kubernetes_service_v1" "myapp3_np_service" {
       app = kubernetes_deployment_v1.myapp3.spec.0.selector.0.match_labels.app
     }
     port {
-      name = "http"
-      port = 80
+      name        = "http"
+      port        = 80
       target_port = 80
     }
     type = "NodePort"

@@ -1,0 +1,59 @@
+# Verify Kubernetes Worker Nodes using kubectl
+kubectl get nodes
+kubectl get nodes -o wide
+
+# List Fargate Profiles
+aws eks list-fargate-profiles --cluster=demo-eks
+
+Step-09: Patch CoreDNS Pod in kube-system to run on EKS Fargate Profile
+
+# Verify Pods 
+kubectl -n kube-system get pods
+Observation: Should see coredns pods in pending state
+
+# Run the following command to remove the eks.amazonaws.com/compute-type : ec2 annotation from the CoreDNS pods.
+kubectl patch deployment coredns \
+    -n kube-system \
+    --type json \
+    -p='[{"op": "remove", "path": "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type"}]'
+
+# Delete & Recreate CoreDNS Pods so that they can get scheduled on Fargate 
+kubectl rollout restart -n kube-system deployment coredns
+
+# Verify Pods 
+kubectl -n kube-system get pods
+Observation: 
+1. Wait for a minute or two
+2. Should see coredns pods in Running state
+
+# Verify Worker Nodes
+kubectl get nodes
+Observation: Should see two Fargate nodes related to CoreDNS running
+
+
+kubectl get pods -o yaml -n <namespace> <pod-name> | grep schedulerName.
+
+If a pod specification matches with multiple Fargate profiles, 
+then the pod is scheduled according to a random Fargate profile. 
+To avoid this, use the annotation eks.amazonaws.com/fargate-profile:fp_name 
+within the pod specification. Replace fp_name with your Fargate profile name.
+
+kubectl get pods -o yaml -n kube-system coredns-7f54c9dc95-sjx5t  | grep schedulerName
+
+kubectl get pods -o yaml -n kube-system coredns-7f54c9dc95-sjx5t  | grep annotations
+
+kubectl patch deployment aws-load-balancer-controller -n kube-system \
+  --type='json' \
+  -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"eks.amazonaws.com/compute-type":"ec2"}}]'
+
+
+  kubectl patch deployment coredns -n kube-system \
+  --type='json' \
+  -p='[{"op": "remove", "path": "/spec/template/spec/nodeSelector", "value": {"eks.amazonaws.com/compute-type":"ec2"}}]'
+
+  kubectl rollout restart -n kube-system deployment aws-load-balancer-controller
+
+  kubectl patch deployment coredns \
+    -n kube-system \
+    --type json \
+    -p='[{"op": "remove", "path": "/spec/template/metadata/annotations/eks.amazonaws.com/compute-type"}]'

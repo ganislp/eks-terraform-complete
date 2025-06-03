@@ -157,3 +157,24 @@ variable "eks_worker_node_role_name" {
   default = "eks_worker_node_role"
 }
 
+variable "aws_eks_fargate_profile_ns" {
+  type    = list(string)
+  default = ["kube-system","default"]
+}
+ variable "core_dns_labels" {
+  type = object({
+    k8s-app = optional (string)
+  })
+
+  default = {
+    "k8s-app" = "kube-dns"
+  }
+}
+
+variable "default_core_dns_labels" {
+   default = {
+
+  }
+}
+
+
