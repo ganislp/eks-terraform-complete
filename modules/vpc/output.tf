@@ -17,3 +17,8 @@ output "public_route_table_id" {
 output "private_route_table_id" {
   value = aws_route_table.private_route_table.id
 }
+
+output "vpc_cidr_block" {
+  value = aws_vpc.this.cidr_block
+}
+

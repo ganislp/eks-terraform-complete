@@ -38,6 +38,9 @@ output "aws_iam_openid_connect_provider_extract_from_arn" {
 output "private_subnets" {
   value = module.vpc.private_subnets
 }
+output "vpc_cidr_block" {
+  value = module.vpc.cidr_block
+}
 
 
 # Outputs: Fargate Profile for kube-system Namespace

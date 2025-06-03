@@ -39,8 +39,8 @@ resource "aws_eks_node_group" "eks_private_node_group" {
 
   scaling_config {
     max_size     = 2
-    desired_size = 1
-    min_size     = 1
+    desired_size = 2
+    min_size     = 3
   }
 
   remote_access {

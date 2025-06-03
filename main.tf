@@ -40,78 +40,70 @@ module "eks_cluester" {
 
 
 
-module "fargate_profile_kube_system_namespace" {
-  source                     = "./modules/eks-fargate-profiles"
-  private_subnets            = module.vpc.private_subnets
-  eks_cluster_name           = module.eks_cluester.eks_cluster_name
-  forgate_profile_name = "fp-kube-system"
-  name_space                 = "kube-system"
-  fargate_profile_role_arn = aws_iam_role.fargate_profile_role.arn
-   depends_on                          = [module.eks_cluester]
+# module "fargate_profile_kube_system_namespace" {
+#   source                     = "./modules/eks-fargate-profiles"
+#   private_subnets            = module.vpc.private_subnets
+#   eks_cluster_name           = module.eks_cluester.eks_cluster_name
+#   forgate_profile_name = "fp-kube-system"
+#   name_space                 = "kube-system"
+#   fargate_profile_role_arn = aws_iam_role.fargate_profile_role.arn
+#    depends_on                          = [module.eks_cluester]
+# }
+
+
+
+
+
+
+
+
+module "eks_cluster_admin_users" {
+  source                             = "./modules/eks-admin-users"
+  naming_prefix                      = local.naming_prefix
+  common_tags                        = local.common_tags
+  cluster_certificate_authority_data = module.eks_cluester.cluster_certificate_authority_data
+  cluster_endpoint                   = module.eks_cluester.cluster_endpoint
+  cluster_id                         = module.eks_cluester.cluster_id
+  eks_admin_user                     = var.eks_admin_user
+  eks_basic_user                     = var.eks_basic_user
+  eks_worker_node_role_name          = var.eks_worker_node_role_name
+
+
 }
 
 
+module "eks_cluster_admin_with_role" {
+  source                             = "./modules/eks-admins-with-iam-roles"
+  common_tags                        = local.common_tags
+  cluster_certificate_authority_data = module.eks_cluester.cluster_certificate_authority_data
+  cluster_endpoint                   = module.eks_cluester.cluster_endpoint
+  cluster_id                         = module.eks_cluester.cluster_id
+  eks_admin_user                     = var.eks_admin_user
+  eks_basic_user                     = var.eks_basic_user
+  eks_worker_node_role_name          = var.eks_worker_node_role_name
+  eks_admin_group_name               = "eksadmins"
+  eks_admin_role_name                = "eks-admin-role"
+  naming_prefix                      = local.naming_prefix
+  eks_readonly_role_name             = "eks_readonly_role"
+  eks_read_only_group_name           = "eksreadonly"
+  eksreadonly_user_name              = "eksreadonly1"
+  eks_developer_user_name = "eksdeveloper1"
+}
 
-# module "fargate_profile_default_namespace" {
-#   source                     = "./modules/eks-fargate-profiles"
-#   private_subnets            = module.vpc.private_subnets
-#   eks_cluster_name           = var.eks_cluster_name
-#   naming_prefix              = local.naming_prefix
-#   common_tags                = local.common_tags
-#   forgate_profile_name_space = "${local.naming_prefix}-fp-default"
-#   name_space                 = "default"
-# }
-
-
-
-
-# module "eks_cluster_admin_users" {
-#   source                             = "./modules/eks-admin-users"
-#   naming_prefix                      = local.naming_prefix
-#   common_tags                        = local.common_tags
-#   cluster_certificate_authority_data = module.eks_cluester.cluster_certificate_authority_data
-#   cluster_endpoint                   = module.eks_cluester.cluster_endpoint
-#   cluster_id                         = module.eks_cluester.cluster_id
-#   eks_admin_user                     = var.eks_admin_user
-#   eks_basic_user                     = var.eks_basic_user
-#   eks_worker_node_role_name          = var.eks_worker_node_role_name
-
-
-# }
-
-
-# module "eks_cluster_admin_with_role" {
-#   source                             = "./modules/eks-admins-with-iam-roles"
-#   common_tags                        = local.common_tags
-#   cluster_certificate_authority_data = module.eks_cluester.cluster_certificate_authority_data
-#   cluster_endpoint                   = module.eks_cluester.cluster_endpoint
-#   cluster_id                         = module.eks_cluester.cluster_id
-#   eks_admin_user                     = var.eks_admin_user
-#   eks_basic_user                     = var.eks_basic_user
-#   eks_worker_node_role_name          = var.eks_worker_node_role_name
-#   eks_admin_group_name               = "eksadmins"
-#   eks_admin_role_name                = "eks-admin-role"
-#   naming_prefix                      = local.naming_prefix
-#   eks_readonly_role_name             = "eks_readonly_role"
-#   eks_read_only_group_name           = "eksreadonly"
-#   eksreadonly_user_name              = "eksreadonly1"
-#   eks_developer_user_name = "eksdeveloper1"
-# }
-
-# module "eks_node_group_public_private" {
-#   source                      = "./modules/eks-node-group"
-#   eks_cluster_node_group_name = var.eks_cluster_node_group_name
-#   eks_cluster_name            = module.eks_cluester.eks_cluster_name
-#   capacity_type               = var.capacity_type
-#   eks_cluster_version         = var.eks_cluster_version
-#   common_tags                 = local.common_tags
-#   naming_prefix               = local.naming_prefix
-#   key_name                    = var.key_name
-#   public_subnets              = module.vpc.public_subnets
-#   private_subnets             = module.vpc.private_subnets
-#   instance_types              = var.instance_types
-#   depends_on                  = [module.eks_cluster_admin_with_role]
-# }
+module "eks_node_group_public_private" {
+  source                      = "./modules/eks-node-group"
+  eks_cluster_node_group_name = var.eks_cluster_node_group_name
+  eks_cluster_name            = module.eks_cluester.eks_cluster_name
+  capacity_type               = var.capacity_type
+  eks_cluster_version         = var.eks_cluster_version
+  common_tags                 = local.common_tags
+  naming_prefix               = local.naming_prefix
+  key_name                    = var.key_name
+  public_subnets              = module.vpc.public_subnets
+  private_subnets             = module.vpc.private_subnets
+  instance_types              = var.instance_types
+  depends_on                  = [module.eks_cluster_admin_with_role]
+}
 
 
 

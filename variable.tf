@@ -126,7 +126,7 @@ variable "capacity_type" {
 
 variable "instance_types" {
   type    = list(string)
-  default = ["t3.medium"]
+  default = ["t3.large"]
 }
 
 variable "eks_node_group_public" {
