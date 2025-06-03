@@ -24,6 +24,12 @@ locals {
 #   }
 
 #   tags = merge(var.common_tags, { Name = "${local.node_group_name_public}" })
+#  tags = {
+#     Name = "Public-Node-Group"
+#     # Cluster Autoscaler Tags
+#     "k8s.io/cluster-autoscaler/${var.eks_cluster_name}" = "owned"
+#     "k8s.io/cluster-autoscaler/enabled" = "TRUE"	    
+#   }
 
 # }
 
@@ -38,15 +44,20 @@ resource "aws_eks_node_group" "eks_private_node_group" {
   disk_size       = 20
 
   scaling_config {
-    max_size     = 2
-    desired_size = 2
-    min_size     = 3
+    max_size     = 3
+    desired_size = 1
+    min_size     = 1
   }
 
   remote_access {
     ec2_ssh_key = var.key_name
   }
 
-  tags = merge(var.common_tags, { Name = "${local.node_group_name_private}" })
-
+  # tags = merge(var.common_tags, { Name = "${local.node_group_name_private}" })
+tags = {
+    Name = "Private-Node-Group"
+    # Cluster Autoscaler Tags
+    "k8s.io/cluster-autoscaler/${var.eks_cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled" = "TRUE"	    
+  }
 }

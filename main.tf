@@ -57,19 +57,19 @@ module "eks_cluester" {
 
 
 
-module "eks_cluster_admin_users" {
-  source                             = "./modules/eks-admin-users"
-  naming_prefix                      = local.naming_prefix
-  common_tags                        = local.common_tags
-  cluster_certificate_authority_data = module.eks_cluester.cluster_certificate_authority_data
-  cluster_endpoint                   = module.eks_cluester.cluster_endpoint
-  cluster_id                         = module.eks_cluester.cluster_id
-  eks_admin_user                     = var.eks_admin_user
-  eks_basic_user                     = var.eks_basic_user
-  eks_worker_node_role_name          = var.eks_worker_node_role_name
+# module "eks_cluster_admin_users" {
+#   source                             = "./modules/eks-admin-users"
+#   naming_prefix                      = local.naming_prefix
+#   common_tags                        = local.common_tags
+#   cluster_certificate_authority_data = module.eks_cluester.cluster_certificate_authority_data
+#   cluster_endpoint                   = module.eks_cluester.cluster_endpoint
+#   cluster_id                         = module.eks_cluester.cluster_id
+#   eks_admin_user                     = var.eks_admin_user
+#   eks_basic_user                     = var.eks_basic_user
+#   eks_worker_node_role_name          = var.eks_worker_node_role_name
 
 
-}
+# }
 
 
 module "eks_cluster_admin_with_role" {

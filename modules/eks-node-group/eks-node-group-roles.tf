@@ -40,3 +40,9 @@ resource "aws_iam_role_policy_attachment" "eks_worker_node_role_cni_ecr" {
   role       = aws_iam_role.eks_worker_node_role.name
   policy_arn = data.aws_iam_policy.eks_worker_node_container_ecr_policy.arn
 }
+
+# Autoscaling Full Access
+resource "aws_iam_role_policy_attachment" "eks-Autoscaling-Full-Access" {
+  policy_arn = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
+  role       = aws_iam_role.eks_worker_node_role.name
+}
