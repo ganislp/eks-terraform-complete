@@ -46,3 +46,9 @@ resource "aws_iam_role_policy_attachment" "eks-Autoscaling-Full-Access" {
   policy_arn = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
   role       = aws_iam_role.eks_worker_node_role.name
 }
+
+# CloudWatchAgentServerPolicy for AWS CloudWatch Container Insights
+resource "aws_iam_role_policy_attachment" "eks_cloudwatch_container_insights" {
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.eks_worker_node_role.name
+}
