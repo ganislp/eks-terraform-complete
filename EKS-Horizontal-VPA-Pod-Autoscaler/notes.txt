@@ -1,0 +1,34 @@
+## Sample Output
+Kalyans-MacBook-Pro:52-EKS-Horizontal-Pod-Autoscaler kdaida$ kubectl get hpa
+NAME       REFERENCE                          TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+hpa-app3   Deployment/app3-nginx-deployment   0%/50%    1         10        1          2m1s
+Kalyans-MacBook-Pro:52-EKS-Horizontal-Pod-Autoscaler kdaida$ 
+
+# Run Load Test (New Terminal)
+kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://app3-nginx-cip-service; done"
+
+# List HPA (Wait for few mins)
+kubectl get hpa
+
+# List Pods
+kubectl get pods
+
+Step-02: Install OpenSSL in your Local Terminal
+
+    Please upgrade openssl to version 1.1.1 or higher (needs to support -addext option))
+
+# Install OpenSSL
+brew update
+brew install openssl
+
+# After Install  (Update in your BASH Profile if the installation recommends)
+export PATH="/usr/local/opt/openssl@3/bin:$PATH"
+Refer Link: https://stackoverflow.com/questions/62195898/openssl-still-pointing-to-libressl-2-8-3
+
+# Verify your OpenSSL Version
+openssl version 
+
+## Sample Output
+Kalyans-MacBook-Pro:03-vpa-install-terraform-manifests kdaida$ openssl version
+OpenSSL 3.0.3 3 May 2022 (Library: OpenSSL 3.0.3 3 May 2022)
+Kalyans-MacBook-Pro:03-vpa-install-terraform-manifests kdaida$ 
